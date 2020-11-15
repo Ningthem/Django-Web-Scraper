@@ -16,6 +16,10 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from mailjet_rest import Client
 
+import os
+from django.conf import settings
+
+
 
 class CheckApi(APIView):
     parser_classes = [JSONParser]
@@ -35,6 +39,7 @@ class CheckApi(APIView):
 class ScrapWeb(APIView):
     parser_classes = [JSONParser]
     renderer_classes = [JSONOpenAPIRenderer]
+
 
     def emailer(self, body, email, name):
         api_key = "ebfcb668f6a14de3fa0a9e3715159655"
@@ -60,6 +65,17 @@ class ScrapWeb(APIView):
     def get(self, request):
         scrap_initialize_time = datetime.now()
 
+        BASE_DIR = settings.BASE_DIR
+        DRIVER_DIR = str(BASE_DIR) + "\scrapper\chromedriver.exe1"
+        print(f'BASE DIR {BASE_DIR}')
+        print(f'Driver DIR {DRIVER_DIR}')
+        
+        ABS_PATH = os.path.dirname(os.path.abspath(__file__))
+
+        ABS_DRIVER = os.path.join(ABS_PATH, "chromedriver.exe")
+        print(f'ABS DIR {ABS_DRIVER}')
+
+
         options = webdriver.ChromeOptions()
         options.headless = True
         options.add_argument("window-size=1366x768")    # Very important
@@ -72,8 +88,10 @@ class ScrapWeb(APIView):
         for product in slugs:
             slug_list.append(product.slug)
 
+        # executable_path=r"E:\Tutorials\Python\Web Scrapper\chromedriver.exe",
+
         browser = webdriver.Chrome(
-            executable_path=r"E:\Tutorials\Python\Web Scrapper\chromedriver.exe",
+            executable_path=ABS_DRIVER,
             options=options,
         )
 
